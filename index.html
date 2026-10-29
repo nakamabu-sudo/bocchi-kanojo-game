@@ -1,0 +1,362 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ぼっちな彼女 — 生徒会相談録</title>
+<link rel="stylesheet" href="css/style.css?v=116">
+</head>
+<body>
+<div id="scene-transition" class="scene-transition"></div>
+<div id="app-shell">
+  <main id="game-frame">
+    <section id="title-screen" class="screen active">
+      <div id="audio-unlock" class="audio-unlock"><div class="audio-unlock-card"><span>SOUND ENABLE</span><strong>CLICK TO BEGIN</strong><small>クリック後、メニューにカーソルを合わせると音が鳴ります</small></div></div>
+      <img src="assets/images/title_main.webp" class="title-image" alt="ぼっちな彼女 生徒会相談録">
+      <button id="start-btn" class="title-hotspot title-start" aria-label="START"></button>
+      <button id="continue-btn" class="title-hotspot title-continue" aria-label="CONTINUE"></button>
+      <button id="config-btn" class="title-hotspot title-config" aria-label="CONFIG"></button>
+      <button id="help-btn" class="title-help-button" aria-label="HOW TO PLAY">HOW TO PLAY</button>
+      <div id="title-clear-badge" class="title-clear-badge hidden" aria-live="polite"></div>
+
+      <div id="help-panel" class="overlay hidden" aria-hidden="true">
+        <div class="help-card">
+          <div class="panel-kicker">HOW TO PLAY</div>
+          <h2>遊び方</h2>
+          <div class="help-grid">
+            <section><strong>会話</strong><p>会話欄をクリック／タップすると次の台詞へ進みます。</p></section>
+            <section><strong>調査・聞き込み</strong><p>気になる場所や人物を選び、情報と証拠を集めます。</p></section>
+            <section><strong>EVIDENCE</strong><p>集めた証拠をいつでも確認できます。最終推理では必要な証拠を選びます。</p></section>
+            <section><strong>SAVE / LOAD</strong><p>手動セーブとオートセーブから再開できます。</p></section>
+            <section><strong>AUTO / SKIP / VOICE</strong><p>AUTOで自動送り。SKIPは既読台詞だけ高速送りし、未読で自動停止。VOICEで現在の台詞を再生できます。</p></section>
+            <section><strong>評価</strong><p>誤った推理では★が減ります。解決済み後はBEST評価が記録されます。</p></section>
+          </div>
+          <div class="help-actions"><button id="help-close">閉じる</button></div>
+        </div>
+      </div>
+
+      <div id="config-panel" class="overlay hidden">
+        <div class="config-card">
+          <div class="panel-kicker">CONFIG</div>
+          <h2>設定</h2>
+
+          <label class="config-row">
+            <span>BGM音量</span>
+            <input id="bgm-volume" type="range" min="0" max="100" value="45">
+          </label>
+
+          <label class="config-row">
+            <span>SE音量</span>
+            <input id="se-volume" type="range" min="0" max="100" value="80">
+          </label>
+
+          <label class="config-row">
+            <span>ボイス音量</span>
+            <input id="voice-volume" type="range" min="0" max="100" value="90">
+          </label>
+
+          <label class="config-row toggle-row">
+            <span>ボイスミュート</span>
+            <input id="voice-mute" type="checkbox">
+          </label>
+
+          <label class="config-row">
+            <span>テキスト速度</span>
+            <select id="text-speed">
+              <option value="instant">瞬時</option>
+              <option value="fast">速い</option>
+              <option value="normal" selected>普通</option>
+              <option value="slow">遅い</option>
+            </select>
+          </label>
+
+          <label class="config-row toggle-row">
+            <span>SKIP：未読で停止</span>
+            <input id="skip-stop-unread" type="checkbox" checked>
+          </label>
+
+          <label class="config-row">
+            <span>SKIP速度</span>
+            <select id="skip-speed">
+              <option value="55">高速</option>
+              <option value="90" selected>標準</option>
+              <option value="140">ゆっくり</option>
+            </select>
+          </label>
+
+          <label class="config-row toggle-row">
+            <span>画面効果</span>
+            <input id="screen-effects" type="checkbox" checked>
+          </label>
+
+          <div class="config-actions">
+            <button id="reset-progress" class="danger-button">クリアデータ初期化</button>
+            <button id="config-close">閉じる</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="adv-screen" class="screen">
+      <div id="background" class="background bg-wide"></div>
+      <div class="vignette"></div>
+
+      <div id="stage" class="stage">
+        <div id="portrait-left" class="portrait-slot left hidden"><img alt=""></div>
+        <div id="portrait-center" class="portrait-slot center hidden"><img alt=""></div>
+        <div id="portrait-right" class="portrait-slot right hidden"><img alt=""></div>
+
+        <div id="case-file-overlay" class="case-file-overlay hidden" aria-hidden="true">
+          <div class="case-file-stack">
+            <div class="case-paper paper-1">
+              <span class="paper-clip" aria-hidden="true"></span>
+              <span class="paper-stamp">受付済</span>
+              <div class="paper-code">相談記録 No.01</div>
+              <div class="paper-field"><span>件名</span><strong>消える弁当</strong></div>
+              <div class="paper-field paper-body"><span>相談内容</span><p>昼休みになると、弁当のおかずが一品だけ消えている。</p></div>
+              <div class="paper-meta"><span>担当候補：水城すず</span><span>分類：校内調査</span></div>
+            </div>
+            <div class="case-paper paper-2">
+              <span class="paper-clip" aria-hidden="true"></span>
+              <span class="paper-stamp">受付済</span>
+              <div class="paper-code">相談記録 No.02</div>
+              <div class="paper-field"><span>件名</span><strong>100点になる課題</strong></div>
+              <div class="paper-field paper-body"><span>相談内容</span><p>間違えたはずの課題が、返却されるたび100点になる。</p></div>
+              <div class="paper-meta"><span>担当候補：九条玲</span><span>分類：原因不明</span></div>
+            </div>
+            <div class="case-paper paper-3">
+              <span class="paper-clip" aria-hidden="true"></span>
+              <span class="paper-stamp">受付済</span>
+              <div class="paper-code">相談記録 No.03</div>
+              <div class="paper-field"><span>件名</span><strong>戻ってくる本</strong></div>
+              <div class="paper-field paper-body"><span>相談内容</span><p>焼却物置き場へ出した古い本が、二度も本棚へ戻った。</p></div>
+              <div class="paper-meta"><span>担当候補：大山こはる</span><span>分類：図書室</span></div>
+            </div>
+          </div>
+          <div class="case-file-caption">九条が机の上へ三枚の相談票を並べた。</div>
+          <button id="case-file-continue" class="case-file-continue">相談票を確認する</button>
+        </div>
+
+        <div id="route-start-overlay" class="route-start-overlay hidden" aria-hidden="true">
+          <div class="route-start-card">
+            <div id="route-start-file" class="route-start-file">FILE 01</div>
+            <div id="route-start-title" class="route-start-title">消える弁当</div>
+            <div id="route-start-client" class="route-start-client">依頼人　小宮山紗季</div>
+          </div>
+        </div>
+
+        <div id="load-recap-overlay" class="load-recap-overlay hidden" aria-hidden="true">
+          <div class="load-recap-card">
+            <div class="load-recap-kicker">RECAP</div>
+            <div id="load-recap-file" class="load-recap-file">生徒会相談録</div>
+            <div id="load-recap-scene" class="load-recap-scene">再開地点</div>
+            <div id="load-recap-text" class="load-recap-text">ここから再開します。</div>
+            <button id="load-recap-close" class="load-recap-close">ここから再開</button>
+          </div>
+        </div>
+
+        <div id="route-panel" class="route-panel hidden">
+          <div class="panel-kicker">CASE SELECT</div>
+          <h2>どの相談から調べる？</h2>
+          <div id="all-clear-summary" class="all-clear-summary hidden" aria-live="polite"></div>
+          <div class="route-grid">
+            <button class="route-card suzu-card" data-route="suzu">
+              <span class="route-folder-tab">FILE 01</span><span class="route-seal">調査</span>
+              <span class="route-owner">担当　水城すず</span>
+              <span class="route-client">依頼人　小宮山紗季</span>
+              <strong>消える弁当</strong>
+              <small>昼休みになると、弁当のおかずが一品だけ消えている。</small>
+              <span class="route-state">状態　未調査</span>
+              <span class="route-footer"><b>校内調査</b><em>OPEN FILE</em></span>
+            </button>
+            <button class="route-card kujo-card" data-route="kujo">
+              <span class="route-folder-tab">FILE 02</span><span class="route-seal">調査</span>
+              <span class="route-owner">担当　九条玲</span>
+              <span class="route-client">依頼人　藤崎里奈</span>
+              <strong>100点になる課題</strong>
+              <small>間違えたはずの課題が、返却されるたび100点になる。</small>
+              <span class="route-state">状態　未調査</span>
+              <span class="route-footer"><b>原因不明</b><em>OPEN FILE</em></span>
+            </button>
+            <button class="route-card koharu-card" data-route="koharu">
+              <span class="route-folder-tab">FILE 03</span><span class="route-seal">調査</span>
+              <span class="route-owner">担当　大山こはる</span>
+              <span class="route-client">依頼人　図書委員会</span>
+              <strong>戻ってくる本</strong>
+              <small>焼却物置き場へ出した古い本が、二度も本棚へ戻った。</small>
+              <span class="route-state">状態　未調査</span>
+              <span class="route-footer"><b>図書室</b><em>OPEN FILE</em></span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div id="hud">
+        <button id="log-btn" title="会話ログ">LOG</button>
+        <button id="save-btn" title="セーブ">SAVE</button>
+        <button id="load-btn" title="ロード">LOAD</button>
+        <button id="auto-btn" title="オート">AUTO</button>
+        <button id="skip-btn" title="既読スキップ">SKIP</button>
+        <button id="voice-replay-btn" title="現在のボイスを再生">VOICE</button>
+        <button id="evidence-btn" title="証拠一覧">EVIDENCE</button>
+      </div>
+
+      <div id="dialogue" class="dialogue">
+        
+        <div id="speaker" class="speaker"></div>
+        <div id="text" class="text"></div>
+        <div id="next-indicator">◆</div>
+      </div>
+
+      <div id="choice-box" class="choice-box hidden"></div>
+
+      <div id="event-cg-overlay" class="event-cg-overlay hidden" aria-hidden="true">
+        <img id="event-cg-image" alt="イベントCG">
+        <div class="event-cg-hint">クリックで戻る</div>
+      </div>
+
+      <div id="ending-overlay" class="ending-overlay hidden" aria-hidden="true">
+        <img id="ending-image" class="ending-image" alt="エンディングCG">
+        <div id="ending-shade" class="ending-shade"></div>
+        <div id="ending-end" class="ending-end">END</div>
+        <div id="ending-credits-viewport" class="ending-credits-viewport hidden">
+          <div id="ending-credits" class="ending-credits">
+            <div class="credit-pair"><span>企画</span><strong>式守伊之助</strong></div>
+            <div class="credit-pair"><span>シナリオ</span><strong>式守伊之助</strong></div>
+            <div class="credit-pair"><span>キャラクターデザイン</span><strong>式守伊之助</strong></div>
+            <div class="credit-pair"><span>イラスト</span><strong>ChatGPT</strong></div>
+            <div class="credit-pair"><span>音声制作</span><strong>ElevenLabs</strong></div>
+            <div class="credit-pair tools"><span>使用ツール</span><strong>ChatGPT・Suno・ElevenLabs</strong></div>
+            <div class="credit-final"><span>制作</span><strong>式守伊之助</strong></div>
+          </div>
+        </div>
+        <div id="ending-blackout" class="ending-blackout"></div>
+      </div>
+
+      <div id="case-result-panel" class="case-result-panel hidden" aria-hidden="true">
+        <div class="case-result-card">
+          <div id="case-result-kicker" class="case-result-kicker">解決済</div>
+          <h2 id="case-result-title">FILE 01</h2>
+          <p id="case-result-text"></p>
+          <div id="case-result-stats" class="case-result-stats"></div>
+          <div id="case-progress-row" class="case-progress-row"></div>
+          <button id="case-result-next">相談一覧へ戻る</button>
+        </div>
+      </div>
+
+      <div id="evidence-acquire" class="evidence-acquire hidden" aria-hidden="true">
+        <div class="evidence-card">
+          <div class="evidence-kicker">EVIDENCE ACQUIRED</div>
+          <h2 id="evidence-acquire-title">証拠を入手</h2>
+          <p id="evidence-acquire-body"></p>
+          <button id="evidence-acquire-close">記録する</button>
+        </div>
+      </div>
+
+      <div id="investigation-panel" class="investigation-panel hidden" aria-hidden="true">
+        <div class="investigation-head">
+          <div><span>INVESTIGATION</span><h2>1年教室を調べる</h2></div>
+          <div id="investigation-progress">0 / 3</div>
+        </div>
+        <p class="investigation-lead">気になる場所・証言を選んで調査する。</p>
+        <div class="investigation-grid">
+          <button class="investigation-card" data-investigate="desk">
+            <b>01</b><strong>机まわり</strong><small>弁当箱や袋、机の中を確認する</small><em>未調査</em>
+          </button>
+          <button class="investigation-card" data-investigate="classmate">
+            <b>02</b><strong>同級生への聞き込み</strong><small>最近、紗季の席の近くにいた生徒を調べる</small><em>未調査</em>
+          </button>
+          <button class="investigation-card" data-investigate="lunch">
+            <b>03</b><strong>昼休みの出入り</strong><small>昼休みに教室へ戻ってきた生徒を確認する</small><em>未調査</em>
+          </button>
+        </div>
+        <div id="investigation-result" class="investigation-result">調査項目を選んでください。</div>
+        <div id="investigation-options" class="investigation-options hidden" aria-live="polite"></div>
+        <button id="investigation-finish" class="investigation-finish" disabled>調査結果を整理する</button>
+      </div>
+
+      <div id="interview-panel" class="interview-panel hidden" aria-hidden="true">
+        <div class="interview-head">
+          <div><span>INTERVIEW</span><h2>容疑者候補に話を聞く</h2></div>
+          <div id="interview-progress">0 / 2</div>
+        </div>
+        <p class="interview-lead">順番は自由。二人の証言を確かめる。</p>
+        <div class="interview-grid">
+          <button class="interview-card" data-interview="kazami">
+            <b>01</b><strong>風見 蓮司</strong><small>紗季と最近口論。昼前に紗季の席付近にいた。</small><em>未聴取</em>
+          </button>
+          <button class="interview-card" data-interview="asakura">
+            <b>02</b><strong>朝倉 夏帆</strong><small>昼休みに何度も教室へ戻り、事件を気にしている。</small><em>未聴取</em>
+          </button>
+        </div>
+        <div id="interview-result" class="interview-result">話を聞く相手を選んでください。</div>
+        <button id="interview-finish" class="interview-finish" disabled>二人の証言を整理する</button>
+      </div>
+
+      <div id="evidence-panel" class="overlay hidden">
+        <div class="overlay-card evidence-list-card">
+          <div class="panel-kicker">EVIDENCE</div>
+          <h2>証拠・重要情報</h2>
+          <div id="evidence-list" class="evidence-list"></div>
+          <button id="evidence-close">閉じる</button>
+        </div>
+      </div>
+
+      <div id="deduction-panel" class="overlay hidden" aria-hidden="true">
+        <div class="overlay-card deduction-card">
+          <div class="panel-kicker">FINAL DEDUCTION</div>
+          <h2>真相を説明する4枚を選ぶ</h2>
+          <p id="deduction-lead" class="deduction-lead">必要な情報カードは4枚。選択は一度だけ。</p>
+          <div id="deduction-list" class="deduction-list"></div>
+          <div class="deduction-actions">
+            <span id="deduction-count">0 / 4</span>
+            <button id="deduction-submit" disabled>選んだカードで推理する</button>
+          </div>
+        </div>
+      </div>
+
+
+      <div id="save-load-panel" class="overlay hidden" aria-hidden="true">
+        <div class="overlay-card save-load-card">
+          <div class="panel-kicker" id="save-load-kicker">SAVE DATA</div>
+          <h2 id="save-load-title">セーブ／ロード</h2>
+          <div class="save-slot-grid">
+            <button class="save-slot" id="manual-slot" data-slot="manual">
+              <span class="save-slot-tag">MANUAL</span>
+              <strong id="manual-slot-main">セーブデータなし</strong>
+              <small id="manual-slot-sub">―</small>
+            </button>
+            <button class="save-slot" id="auto-slot" data-slot="auto">
+              <span class="save-slot-tag">AUTO</span>
+              <strong id="auto-slot-main">オートセーブなし</strong>
+              <small id="auto-slot-sub">―</small>
+            </button>
+          </div>
+          <div class="save-load-actions">
+            <button id="save-load-close">閉じる</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="log-panel" class="overlay hidden">
+        <div class="overlay-card">
+          <div class="panel-kicker">ARCHIVE</div>
+          <h2>会話ログ</h2>
+          <div class="log-toolbar">
+            <span id="log-count" class="log-count">0件</span>
+            <button id="log-latest" type="button">最新へ</button>
+          </div>
+          <div id="log-content" class="log-content"></div>
+          <button id="log-close">閉じる</button>
+        </div>
+      </div>
+
+      <div id="notice" class="notice hidden"></div>
+    </section>
+  </main>
+</div>
+<audio id="bgm-player" preload="auto" loop></audio>
+<script src="js/scenario.js?v=116"></script>
+<script src="js/engine.js?v=116"></script>
+</body>
+</html>
